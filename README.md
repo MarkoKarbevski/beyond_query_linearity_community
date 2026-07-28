@@ -63,7 +63,7 @@ We are grateful to the anonymous reviewers for their constructive feedback, and 
 
 This repository represents an independent research initiative focused on establishing the mathematical foundations and structural validity of Nonlinear Residual Queries (NRQ). 
 
-To isolate the core architectural mechanics cleanly, development has been focused entirely on delivering a verified implementation, rather than an industrialized production framework. As a solo researcher, I highly welcome both open-source and commercial collaborations to improve the work.
+To isolate the core architectural mechanics cleanly, development has been focused entirely on delivering a verified implementation, rather than an industrialized production framework. 
 ---
 The code has been tested on Python version `3.12.11` using a single Nvidia 5090 RTX GPU.
 
