@@ -4,7 +4,7 @@ Standalone fixed sweep over all 34 checkpoints.
 Fixes applied (matching run_schur_analysis_gpt3_large.py and compute_validation_losses.py):
   - Real WikiText-2 data: continuous blocks, no PAD padding
   - Correct scale per architecture (original: 1/√d_head, residual_gelu: 1/(2√d_head))
-  - Shrinkage=True for high-dimensional B covariance
+  - Cross-validated joint ridge for high-dimensional B covariance (was LedoitWolf)
   - Direct second-moment MSE (no np.cov) for holdout/in-sample residual
   - Batch unpacking handles list/tuple and dict batches
   - Config inference from checkpoint weights (n_embd, mlp_hidden_size, n_layer, query_mode)
@@ -23,7 +23,9 @@ import os
 import argparse
 import gc
 import csv
-from sklearn.covariance import LedoitWolf
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from schur_stats import schur_complement_stats, permutation_null
 from datasets import load_dataset
 from transformers import AutoTokenizer
 from torch.utils.data import DataLoader, TensorDataset
@@ -383,111 +385,9 @@ def extract_model_features(model, layer_idx, data_loader, n_embd, max_batches=5,
 
 
 # =============================================================================
-# Schur complement statistics (fixed version)
+# Schur complement statistics: imported from shared module schur_stats.py
+#   (joint-ridge estimator with cross-validated ridge penalty; back-compatible)
 # =============================================================================
-
-def shrinkage_cov(X):
-    lw = LedoitWolf().fit(X)
-    return lw.covariance_
-
-
-def pinv_eig(S, rel_cutoff=1e-8):
-    S = 0.5 * (S + S.T)
-    w, V = np.linalg.eigh(S)
-    wmax = w.max() if w.max() > 0 else 1.0
-    keep = w > rel_cutoff * wmax
-    w_inv = np.zeros_like(w)
-    w_inv[keep] = 1.0 / w[keep]
-    return (V * w_inv) @ V.T
-
-
-def eig_rank(S, rel_cutoff=1e-6):
-    S = 0.5 * (S + S.T)
-    w = np.linalg.eigvalsh(S)
-    wmax = w.max() if w.max() > 0 else 1.0
-    return int(np.sum(w > rel_cutoff * wmax))
-
-
-def eig_rank_scaled(S, reference_scale, rel_cutoff=1e-3):
-    S = 0.5 * (S + S.T)
-    w = np.linalg.eigvalsh(S)
-    ref = reference_scale if reference_scale > 0 else 1.0
-    return int(np.sum(w > rel_cutoff * ref))
-
-
-def schur_complement_stats(F, B, rel_cutoffs=(1e-3, 1e-4, 1e-6, 1e-8),
-                           use_shrinkage=True, holdout_frac=0.5, seed=0):
-    """Schur complement: how much of F is NOT linearly predictable from B."""
-    rng = np.random.default_rng(seed)
-    N = F.shape[0]
-    idx = rng.permutation(N)
-    n_train = int(N * (1 - holdout_frac))
-    tr, ev = idx[:n_train], idx[n_train:]
-
-    Ftr, Btr = F[tr], B[tr]
-    Fev, Bev = F[ev], B[ev]
-
-    Fmean, Bmean = Ftr.mean(0), Btr.mean(0)
-    Ftr_c, Btr_c = Ftr - Fmean, Btr - Bmean
-    Fev_c, Bev_c = Fev - Fmean, Bev - Bmean
-
-    if use_shrinkage:
-        Sigma_bb = shrinkage_cov(Btr)
-    else:
-        Sigma_bb = (Btr_c.T @ Btr_c) / (n_train - 1)
-    Sigma_fb = (Ftr_c.T @ Btr_c) / (n_train - 1)
-
-    Sigma_bb_pinv = pinv_eig(Sigma_bb)
-    W = Sigma_fb @ Sigma_bb_pinv
-
-    # In-sample residual evaluation (direct from fitted weights)
-    Ftr_hat_c = Btr_c @ W.T
-    resid_tr = Ftr_c - Ftr_hat_c
-    Rf_insample = (resid_tr.T @ resid_tr) / n_train
-
-    # Out-of-sample holdout evaluation (measured relative to 0)
-    Fev_hat_c = Bev_c @ W.T
-    resid_ev = Fev_c - Fev_hat_c
-    Rf_holdout = (resid_ev.T @ resid_ev) / len(Fev)
-
-    out = {
-        "Sigma_bb": Sigma_bb,
-        "Sigma_fb": Sigma_fb,
-        "Rf_insample": Rf_insample,
-        "Rf_holdout": Rf_holdout,
-    }
-
-    Sff_eval = (Fev_c.T @ Fev_c) / len(Fev)
-    Sff_ref = np.trace(Sff_eval) / Sff_eval.shape[0]
-
-    for cutoff in rel_cutoffs:
-        out[f"rank_Sigma_bb@{cutoff:g}"] = eig_rank(Sigma_bb, cutoff)
-        out[f"rank_Rf_insample@{cutoff:g}"] = eig_rank_scaled(Rf_insample, Sff_ref, cutoff)
-        out[f"rank_Rf_holdout@{cutoff:g}"] = eig_rank_scaled(Rf_holdout, Sff_ref, cutoff)
-
-    tr_Rf = np.trace(Rf_holdout)
-    tr_Rf2 = np.trace(Rf_holdout @ Rf_holdout)
-    tr_Sff = np.trace(Sff_eval)
-    out["nu_eff"] = float(tr_Rf ** 2 / tr_Rf2) if tr_Rf2 > 0 else 0.0
-    out["nu_frac"] = float(tr_Rf / tr_Sff) if tr_Sff > 0 else 0.0
-    return out
-
-
-def permutation_null(F, B, n_perm=3, **kwargs):
-    rng = np.random.default_rng(123)
-    nu_effs, nu_fracs = [], []
-    for i in range(n_perm):
-        perm = rng.permutation(F.shape[0])
-        stats = schur_complement_stats(F[perm], B, seed=i, **kwargs)
-        nu_effs.append(stats["nu_eff"])
-        nu_fracs.append(stats["nu_frac"])
-    return {
-        "nu_eff_null_mean": float(np.mean(nu_effs)),
-        "nu_eff_null_std": float(np.std(nu_effs)),
-        "nu_frac_null_mean": float(np.mean(nu_fracs)),
-        "nu_frac_null_std": float(np.std(nu_fracs)),
-    }
-
 
 # =============================================================================
 # Main sweep
@@ -506,6 +406,26 @@ def main():
     device = args.device if torch.cuda.is_available() else "cpu"
     print(f"Device: {device}")
 
+    # --- Resume support: load any rows already written to the output CSV ---
+    ROW_FIELDS = [
+        "config", "query_mode", "mlp_mult", "layer",
+        "nu_eff", "nu_eff_null_mean", "nu_eff_null_std",
+        "nu_frac", "nu_frac_null_mean", "nu_frac_null_std",
+        "ridge_lambda", "cond_Sigma_bb", "rank_Rf_holdout@1e-6",
+    ]
+    done = set()
+    if os.path.exists(args.output) and os.path.getsize(args.output) > 0:
+        with open(args.output, newline="") as f:
+            for r in csv.DictReader(f):
+                if r.get("config") is not None and r.get("layer") is not None:
+                    done.add((r["config"], str(r["layer"])))
+        print(f"Resume: {len(done)} layer-rows already present, will skip them.")
+    out_f = open(args.output, "a", newline="")
+    writer = csv.DictWriter(out_f, fieldnames=ROW_FIELDS)
+    if os.path.getsize(args.output) == 0:
+        writer.writeheader()
+        out_f.flush()
+
     # --- Data ---
     print("\nLoading WikiText-2 (real text)...")
     data_loader = make_real_data_loader(batch_size=4, seq_len=1024, num_batches=args.max_batches, device=device)
@@ -513,7 +433,7 @@ def main():
 
     # --- Sweep ---
     rng = np.random.default_rng(0)
-    all_rows = []
+    n_rows = 0
 
     for i, (name, query_mode, mlp_mult) in enumerate(CONFIGS):
         print(f"\n[{i+1}/{len(CONFIGS)}] {name} (query_mode={query_mode})")
@@ -525,6 +445,9 @@ def main():
         n_layers = model.config.n_layer
 
         for L in range(n_layers):
+            if (name, str(L)) in done:
+                print(f"  Layer {L}/{n_layers-1}: skipped (already in output)")
+                continue
             print(f"  Layer {L}/{n_layers-1}...", end=" ", flush=True)
 
             F_arr, P_arr, Q_arr = extract_model_features(
@@ -540,8 +463,8 @@ def main():
             else:
                 F_eval, B_eval = F_arr, B_arr
 
-            stats = schur_complement_stats(F_eval, B_eval, use_shrinkage=True)
-            null = permutation_null(F_eval, B_eval, n_perm=args.n_perm, use_shrinkage=True)
+            stats = schur_complement_stats(F_eval, B_eval)
+            null = permutation_null(F_eval, B_eval, n_perm=args.n_perm)
 
             row = {
                 "config": name,
@@ -554,9 +477,13 @@ def main():
                 "nu_frac": stats["nu_frac"],
                 "nu_frac_null_mean": null["nu_frac_null_mean"],
                 "nu_frac_null_std": null["nu_frac_null_std"],
+                "ridge_lambda": stats["ridge_lambda"],
+                "cond_Sigma_bb": stats["cond_Sigma_bb"],
                 "rank_Rf_holdout@1e-6": stats["rank_Rf_holdout@1e-06"],
             }
-            all_rows.append(row)
+            writer.writerow(row)
+            out_f.flush()
+            n_rows += 1
             print(f"nu_frac={stats['nu_frac']:.6f}")
 
             del F_arr, B_arr, F_eval, B_eval, stats, null
@@ -567,13 +494,8 @@ def main():
         if device == "cuda":
             torch.cuda.empty_cache()
 
-    # --- Save ---
-    with open(args.output, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=all_rows[0].keys())
-        writer.writeheader()
-        writer.writerows(all_rows)
-
-    print(f"\nSaved {len(all_rows)} rows to {args.output}")
+    out_f.close()
+    print(f"\nTotal rows in {args.output}: {n_rows}")
     print("Done!")
 
 

@@ -33,7 +33,7 @@ We measure **nu_frac** = tr(R_f) / tr(S_ff) where:
 
 We use:
 - **Out-of-sample evaluation**: split data 50/50, fit regression on one half, measure residual on the other
-- **Ledoit-Wolf shrinkage** for the 2d-dimensional B covariance matrix (stabilizes high-dimensional estimation)
+- **Joint ridge regression** (λ cross-validated per layer) for the 2d-dimensional B covariance matrix. This is a proper regularized linear solve `W = Σ_fb (Σ_bb + λI)^{-1}`, replacing the earlier Ledoit-Wolf scheme, which shrunk only Σ_bb (toward covariance-estimation error, not regression error) and systematically inflated nu_frac — by more for layers whose K/V covariance is near-isotropic, confounding cross-layer comparison.
 - **Permutation null baseline**: shuffle Q against (K,V) to measure the noise floor
 - **Real text data** (WikiText-2) rather than random tokens (random tokens systematically underestimate nu_frac)
 
@@ -102,12 +102,12 @@ We compare two query modes:
 
 ### GPT-2 Medium Sweep (34 configs)
 
-| Query Mode | Configs | Mean nu_frac | Interpretation |
-|------------|---------|-------------|----------------|
-| **original** | 8 | **0.0088** | Q is ~99.1% linearly predictable from K,V |
-| **residual_gelu** | 26 | **0.1332** | Q is ~13.3% NOT predictable from K,V — **15x separation** |
+| Query Mode | Configs | Median nu_frac | Interpretation |
+|------------|---------|---------------|----------------|
+| **original** | 8 | **~0.0000** | Q is (numerically) perfectly linearly predictable from K,V |
+| **residual_gelu** | 26 | **0.122** | Q is ~12% NOT predictable from K,V — near-total separation |
 
-**Key finding**: The residual_gelu modification consistently produces Q vectors that are significantly less linearly predictable from K,V, across all 26 hyperparameter settings (varying weight decay, learning rate, training steps). The effect is robust and not sensitive to hyperparameters.
+**Key finding**: The residual_gelu modification consistently produces Q vectors whose content is almost entirely *not* a linear function of K,V, whereas the original linear projection is essentially fully linearly predictable (median nu_frac ≈ 0). With the estimator corrected (joint ridge instead of Ledoit shrinkage), the original-mode layers drop from the previously-reported ~0.0088 to ≈0, confirming the earlier original-mode value was largely an estimator artifact rather than true nonlinearity. Note the few individual-layer outliers (e.g. orig layer-3 nu_frac ≈ 0.18 in one config) and the per-layer `ridge_lambda`/`cond_Sigma_bb` columns are reported in `sweep_results.csv` for cross-layer de-confounding.
 
 ### GPT-3 Large (24 layers, 1536d)
 

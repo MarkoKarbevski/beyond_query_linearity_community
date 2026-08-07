@@ -19,7 +19,9 @@ import math
 import os
 import argparse
 import gc
-from sklearn.covariance import LedoitWolf
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from schur_stats import schur_complement_stats, permutation_null
 
 
 # =============================================================================
@@ -278,111 +280,8 @@ def extract_model_features(model, layer_idx, data_loader, n_embd, max_batches=5,
 
 
 # =============================================================================
-# Schur complement statistics
+# Schur complement statistics: imported from shared module schur_stats.py
 # =============================================================================
-
-def shrinkage_cov(X):
-    lw = LedoitWolf().fit(X)
-    return lw.covariance_
-
-
-def pinv_eig(S, rel_cutoff=1e-8):
-    S = 0.5 * (S + S.T)
-    w, V = np.linalg.eigh(S)
-    wmax = w.max() if w.max() > 0 else 1.0
-    keep = w > rel_cutoff * wmax
-    w_inv = np.zeros_like(w)
-    w_inv[keep] = 1.0 / w[keep]
-    return (V * w_inv) @ V.T
-
-
-def eig_rank(S, rel_cutoff=1e-6):
-    S = 0.5 * (S + S.T)
-    w = np.linalg.eigvalsh(S)
-    wmax = w.max() if w.max() > 0 else 1.0
-    return int(np.sum(w > rel_cutoff * wmax))
-
-
-def eig_rank_scaled(S, reference_scale, rel_cutoff=1e-3):
-    S = 0.5 * (S + S.T)
-    w = np.linalg.eigvalsh(S)
-    ref = reference_scale if reference_scale > 0 else 1.0
-    return int(np.sum(w > rel_cutoff * ref))
-
-
-def schur_complement_stats(F, B, rel_cutoffs=(1e-3, 1e-4, 1e-6, 1e-8),
-                           use_shrinkage=True, holdout_frac=0.5, seed=0):
-    """Schur complement: how much of F is NOT linearly predictable from B."""
-    rng = np.random.default_rng(seed)
-    N = F.shape[0]
-    idx = rng.permutation(N)
-    n_train = int(N * (1 - holdout_frac))
-    tr, ev = idx[:n_train], idx[n_train:]
-
-    Ftr, Btr = F[tr], B[tr]
-    Fev, Bev = F[ev], B[ev]
-
-    Fmean, Bmean = Ftr.mean(0), Btr.mean(0)
-    Ftr_c, Btr_c = Ftr - Fmean, Btr - Bmean
-    Fev_c, Bev_c = Fev - Fmean, Bev - Bmean
-
-    if use_shrinkage:
-        Sigma_bb = shrinkage_cov(Btr)
-    else:
-        Sigma_bb = (Btr_c.T @ Btr_c) / (n_train - 1)
-    Sigma_fb = (Ftr_c.T @ Btr_c) / (n_train - 1)
-
-    Sigma_bb_pinv = pinv_eig(Sigma_bb)
-    W = Sigma_fb @ Sigma_bb_pinv
-
-    # In-sample residual evaluation (direct from fitted weights)
-    Ftr_hat_c = Btr_c @ W.T
-    resid_tr = Ftr_c - Ftr_hat_c
-    Rf_insample = (resid_tr.T @ resid_tr) / n_train
-
-    # Out-of-sample holdout evaluation (measured relative to 0)
-    Fev_hat_c = Bev_c @ W.T
-    resid_ev = Fev_c - Fev_hat_c
-    Rf_holdout = (resid_ev.T @ resid_ev) / len(Fev)
-
-    out = {
-        "Sigma_bb": Sigma_bb,
-        "Sigma_fb": Sigma_fb,
-        "Rf_insample": Rf_insample,
-        "Rf_holdout": Rf_holdout,
-    }
-
-    Sff_eval = (Fev_c.T @ Fev_c) / len(Fev)
-    Sff_ref = np.trace(Sff_eval) / Sff_eval.shape[0]
-
-    for cutoff in rel_cutoffs:
-        out[f"rank_Sigma_bb@{cutoff:g}"] = eig_rank(Sigma_bb, cutoff)
-        out[f"rank_Rf_insample@{cutoff:g}"] = eig_rank_scaled(Rf_insample, Sff_ref, cutoff)
-        out[f"rank_Rf_holdout@{cutoff:g}"] = eig_rank_scaled(Rf_holdout, Sff_ref, cutoff)
-
-    tr_Rf = np.trace(Rf_holdout)
-    tr_Rf2 = np.trace(Rf_holdout @ Rf_holdout)
-    tr_Sff = np.trace(Sff_eval)
-    out["nu_eff"] = float(tr_Rf ** 2 / tr_Rf2) if tr_Rf2 > 0 else 0.0
-    out["nu_frac"] = float(tr_Rf / tr_Sff) if tr_Sff > 0 else 0.0
-    return out
-
-
-def permutation_null(F, B, n_perm=3, **kwargs):
-    rng = np.random.default_rng(123)
-    nu_effs, nu_fracs = [], []
-    for i in range(n_perm):
-        perm = rng.permutation(F.shape[0])
-        stats = schur_complement_stats(F[perm], B, seed=i, **kwargs)
-        nu_effs.append(stats["nu_eff"])
-        nu_fracs.append(stats["nu_frac"])
-    return {
-        "nu_eff_null_mean": float(np.mean(nu_effs)),
-        "nu_eff_null_std": float(np.std(nu_effs)),
-        "nu_frac_null_mean": float(np.mean(nu_fracs)),
-        "nu_frac_null_std": float(np.std(nu_fracs)),
-    }
-
 
 # =============================================================================
 # Real-text data loader (WikiText-2 via HuggingFace datasets)
@@ -549,9 +448,9 @@ def main():
         else:
             F_eval, B_eval = F_arr, B_arr
 
-        # use_shrinkage=True now (stabilizes 3072-dim B covariance)
-        stats = schur_complement_stats(F_eval, B_eval, use_shrinkage=True)
-        null = permutation_null(F_eval, B_eval, n_perm=args.n_perm, use_shrinkage=True)
+        # joint ridge with cross-validated penalty (was use_shrinkage=True)
+        stats = schur_complement_stats(F_eval, B_eval)
+        null = permutation_null(F_eval, B_eval, n_perm=args.n_perm)
 
         row = {
             "layer": L,
@@ -561,6 +460,8 @@ def main():
             "nu_frac": stats["nu_frac"],
             "nu_frac_null_mean": null["nu_frac_null_mean"],
             "nu_frac_null_std": null["nu_frac_null_std"],
+            "ridge_lambda": stats["ridge_lambda"],
+            "cond_Sigma_bb": stats["cond_Sigma_bb"],
             "rank_Rf_holdout@1e-6": stats["rank_Rf_holdout@1e-06"],
         }
         all_rows.append(row)
