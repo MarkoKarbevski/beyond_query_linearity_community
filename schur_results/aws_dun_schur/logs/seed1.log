@@ -1,0 +1,554 @@
+Device: cuda
+Loading checkpoint: ckpts_seed1/gpt3large_seed1_ckpt1000_modelonly_bf16.pt
+Number of parameters: 756.89M
+Model: 24L, 1536d, 16 heads, query_mode=residual_gelu
+  Checkpoint loaded.
+Loading WikiText-2 (real text data)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (286177 > 1024). Running this sequence through the model will result in indexing errors
+Data: 20 batches of WikiText-2 (real text)
+
+Layer 0/23... nu_frac=0.031702
+
+Layer 1/23... nu_frac=0.007942
+
+Layer 2/23... Device: cuda
+Loading checkpoint: ckpts_seed1/gpt3large_seed1_ckpt1000_modelonly_bf16.pt
+Number of parameters: 756.89M
+Model: 24L, 1536d, 16 heads, query_mode=residual_gelu
+  Checkpoint loaded.
+Loading WikiText-2 (real text data)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (286177 > 1024). Running this sequence through the model will result in indexing errors
+Data: 20 batches of WikiText-2 (real text)
+
+Layer 0/23... nu_frac=0.031702
+
+Layer 1/23... nu_frac=0.007942
+
+Layer 2/23... nu_frac=0.009182
+
+Layer 3/23... nu_frac=0.012925
+
+Layer 4/23... nu_frac=0.016094
+
+Layer 5/23... nu_frac=0.004633
+
+Layer 6/23... nu_frac=0.035766
+
+Layer 7/23... nu_frac=0.070890
+
+Layer 8/23... nu_frac=0.057320
+
+Layer 9/23... nu_frac=0.068691
+
+Layer 10/23... nu_frac=0.053640
+
+Layer 11/23... nu_frac=0.086391
+
+Layer 12/23... nu_frac=0.088537
+
+Layer 13/23... nu_frac=0.075614
+
+Layer 14/23... nu_frac=0.091537
+
+Layer 15/23... nu_frac=0.089288
+
+Layer 16/23... nu_frac=0.089375
+
+Layer 17/23... nu_frac=0.082364
+
+Layer 18/23... nu_frac=0.082891
+
+Layer 19/23... nu_frac=0.069478
+
+Layer 20/23... nu_frac=0.079348
+
+Layer 21/23... nu_frac=0.069240
+
+Layer 22/23... nu_frac=0.047193
+
+Layer 23/23... nu_frac=0.035384
+
+Results saved to: results/schur_seed1_step1000.csv
+Done!
+Device: cuda
+Loading checkpoint: ckpts_seed1/gpt3large_seed1_ckpt2000_modelonly_bf16.pt
+Number of parameters: 756.89M
+Model: 24L, 1536d, 16 heads, query_mode=residual_gelu
+  Checkpoint loaded.
+Loading WikiText-2 (real text data)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (286177 > 1024). Running this sequence through the model will result in indexing errors
+Data: 20 batches of WikiText-2 (real text)
+
+Layer 0/23... nu_frac=0.040952
+
+Layer 1/23... nu_frac=0.006257
+
+Layer 2/23... nu_frac=0.015795
+
+Layer 3/23... nu_frac=0.032267
+
+Layer 4/23... nu_frac=0.028991
+
+Layer 5/23... nu_frac=0.005739
+
+Layer 6/23... nu_frac=0.059864
+
+Layer 7/23... nu_frac=0.093363
+
+Layer 8/23... nu_frac=0.065946
+
+Layer 9/23... nu_frac=0.084173
+
+Layer 10/23... nu_frac=0.058588
+
+Layer 11/23... nu_frac=0.093413
+
+Layer 12/23... nu_frac=0.114208
+
+Layer 13/23... nu_frac=0.096619
+
+Layer 14/23... nu_frac=0.098987
+
+Layer 15/23... nu_frac=0.089949
+
+Layer 16/23... nu_frac=0.091125
+
+Layer 17/23... nu_frac=0.085760
+
+Layer 18/23... nu_frac=0.076683
+
+Layer 19/23... nu_frac=0.058743
+
+Layer 20/23... nu_frac=0.069222
+
+Layer 21/23... nu_frac=0.067808
+
+Layer 22/23... nu_frac=0.063545
+
+Layer 23/23... nu_frac=0.081781
+
+Results saved to: results/schur_seed1_step2000.csv
+Done!
+Device: cuda
+Loading checkpoint: ckpts_seed1/gpt3large_seed1_ckpt5000_modelonly_bf16.pt
+Number of parameters: 756.89M
+Model: 24L, 1536d, 16 heads, query_mode=residual_gelu
+  Checkpoint loaded.
+Loading WikiText-2 (real text data)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (286177 > 1024). Running this sequence through the model will result in indexing errors
+Data: 20 batches of WikiText-2 (real text)
+
+Layer 0/23... nu_frac=0.079551
+
+Layer 1/23... nu_frac=0.006207
+
+Layer 2/23... nu_frac=0.062585
+
+Layer 3/23... nu_frac=0.078968
+
+Layer 4/23... nu_frac=0.093840
+
+Layer 5/23... nu_frac=0.005257
+
+Layer 6/23... nu_frac=0.097696
+
+Layer 7/23... nu_frac=0.151487
+
+Layer 8/23... nu_frac=0.103352
+
+Layer 9/23... nu_frac=0.114360
+
+Layer 10/23... nu_frac=0.063897
+
+Layer 11/23... nu_frac=0.112275
+
+Layer 12/23... nu_frac=0.137736
+
+Layer 13/23... nu_frac=0.125661
+
+Layer 14/23... nu_frac=0.135999
+
+Layer 15/23... nu_frac=0.107563
+
+Layer 16/23... nu_frac=0.119349
+
+Layer 17/23... nu_frac=0.112012
+
+Layer 18/23... nu_frac=0.103182
+
+Layer 19/23... nu_frac=0.093389
+
+Layer 20/23... nu_frac=0.103340
+
+Layer 21/23... nu_frac=0.111494
+
+Layer 22/23... nu_frac=0.126962
+
+Layer 23/23... nu_frac=0.151182
+
+Results saved to: results/schur_seed1_step5000.csv
+Done!
+Device: cuda
+Loading checkpoint: ckpts_seed1/gpt3large_seed1_ckpt10000_modelonly_bf16.pt
+Number of parameters: 756.89M
+Model: 24L, 1536d, 16 heads, query_mode=residual_gelu
+  Checkpoint loaded.
+Loading WikiText-2 (real text data)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (286177 > 1024). Running this sequence through the model will result in indexing errors
+Data: 20 batches of WikiText-2 (real text)
+
+Layer 0/23... nu_frac=0.093064
+
+Layer 1/23... nu_frac=0.008470
+
+Layer 2/23... nu_frac=0.093230
+
+Layer 3/23... nu_frac=0.099655
+
+Layer 4/23... nu_frac=0.122685
+
+Layer 5/23... nu_frac=0.014472
+
+Layer 6/23... nu_frac=0.123913
+
+Layer 7/23... nu_frac=0.168015
+
+Layer 8/23... nu_frac=0.132511
+
+Layer 9/23... nu_frac=0.138184
+
+Layer 10/23... nu_frac=0.078547
+
+Layer 11/23... nu_frac=0.136189
+
+Layer 12/23... nu_frac=0.143366
+
+Layer 13/23... nu_frac=0.150616
+
+Layer 14/23... nu_frac=0.161818
+
+Layer 15/23... nu_frac=0.124053
+
+Layer 16/23... nu_frac=0.135225
+
+Layer 17/23... nu_frac=0.131217
+
+Layer 18/23... nu_frac=0.128900
+
+Layer 19/23... nu_frac=0.112136
+
+Layer 20/23... nu_frac=0.114522
+
+Layer 21/23... nu_frac=0.128520
+
+Layer 22/23... nu_frac=0.149559
+
+Layer 23/23... nu_frac=0.180166
+
+Results saved to: results/schur_seed1_step10000.csv
+Done!
+Device: cuda
+Loading checkpoint: ckpts_seed1/gpt3large_seed1_ckpt20000_modelonly_bf16.pt
+Number of parameters: 756.89M
+Model: 24L, 1536d, 16 heads, query_mode=residual_gelu
+  Checkpoint loaded.
+Loading WikiText-2 (real text data)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (286177 > 1024). Running this sequence through the model will result in indexing errors
+Data: 20 batches of WikiText-2 (real text)
+
+Layer 0/23... nu_frac=0.107785
+
+Layer 1/23... nu_frac=0.021531
+
+Layer 2/23... nu_frac=0.113441
+
+Layer 3/23... nu_frac=0.113121
+
+Layer 4/23... nu_frac=0.145596
+
+Layer 5/23... nu_frac=0.027009
+
+Layer 6/23... nu_frac=0.138097
+
+Layer 7/23... nu_frac=0.177130
+
+Layer 8/23... nu_frac=0.147085
+
+Layer 9/23... nu_frac=0.140656
+
+Layer 10/23... nu_frac=0.094189
+
+Layer 11/23... nu_frac=0.146540
+
+Layer 12/23... nu_frac=0.151903
+
+Layer 13/23... nu_frac=0.163068
+
+Layer 14/23... nu_frac=0.182951
+
+Layer 15/23... nu_frac=0.143485
+
+Layer 16/23... nu_frac=0.136930
+
+Layer 17/23... nu_frac=0.149498
+
+Layer 18/23... nu_frac=0.141851
+
+Layer 19/23... nu_frac=0.119577
+
+Layer 20/23... nu_frac=0.118341
+
+Layer 21/23... nu_frac=0.135849
+
+Layer 22/23... nu_frac=0.139572
+
+Layer 23/23... nu_frac=0.211721
+
+Results saved to: results/schur_seed1_step20000.csv
+Done!
+Device: cuda
+Loading checkpoint: ckpts_seed1/gpt3large_seed1_ckpt30000_modelonly_bf16.pt
+Number of parameters: 756.89M
+Model: 24L, 1536d, 16 heads, query_mode=residual_gelu
+  Checkpoint loaded.
+Loading WikiText-2 (real text data)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (286177 > 1024). Running this sequence through the model will result in indexing errors
+Data: 20 batches of WikiText-2 (real text)
+
+Layer 0/23... nu_frac=0.106369
+
+Layer 1/23... nu_frac=0.031858
+
+Layer 2/23... nu_frac=0.113994
+
+Layer 3/23... nu_frac=0.116890
+
+Layer 4/23... nu_frac=0.157384
+
+Layer 5/23... nu_frac=0.041391
+
+Layer 6/23... nu_frac=0.148243
+
+Layer 7/23... nu_frac=0.182039
+
+Layer 8/23... nu_frac=0.161968
+
+Layer 9/23... nu_frac=0.149167
+
+Layer 10/23... nu_frac=0.103842
+
+Layer 11/23... nu_frac=0.149733
+
+Layer 12/23... nu_frac=0.151444
+
+Layer 13/23... nu_frac=0.164212
+
+Layer 14/23... nu_frac=0.189869
+
+Layer 15/23... nu_frac=0.151840
+
+Layer 16/23... nu_frac=0.139900
+
+Layer 17/23... nu_frac=0.152053
+
+Layer 18/23... nu_frac=0.144969
+
+Layer 19/23... nu_frac=0.130725
+
+Layer 20/23... nu_frac=0.123328
+
+Layer 21/23... nu_frac=0.141157
+
+Layer 22/23... nu_frac=0.139008
+
+Layer 23/23... nu_frac=0.214957
+
+Results saved to: results/schur_seed1_step30000.csv
+Done!
+Device: cuda
+Loading checkpoint: ckpts_seed1/gpt3large_seed1_ckpt40000_modelonly_bf16.pt
+Number of parameters: 756.89M
+Model: 24L, 1536d, 16 heads, query_mode=residual_gelu
+  Checkpoint loaded.
+Loading WikiText-2 (real text data)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (286177 > 1024). Running this sequence through the model will result in indexing errors
+Data: 20 batches of WikiText-2 (real text)
+
+Layer 0/23... nu_frac=0.105756
+
+Layer 1/23... nu_frac=0.028801
+
+Layer 2/23... nu_frac=0.111671
+
+Layer 3/23... nu_frac=0.118394
+
+Layer 4/23... nu_frac=0.162396
+
+Layer 5/23... nu_frac=0.046938
+
+Layer 6/23... nu_frac=0.151786
+
+Layer 7/23... nu_frac=0.187266
+
+Layer 8/23... nu_frac=0.167525
+
+Layer 9/23... nu_frac=0.152686
+
+Layer 10/23... nu_frac=0.108976
+
+Layer 11/23... nu_frac=0.155172
+
+Layer 12/23... nu_frac=0.153733
+
+Layer 13/23... nu_frac=0.164708
+
+Layer 14/23... nu_frac=0.197909
+
+Layer 15/23... nu_frac=0.159955
+
+Layer 16/23... nu_frac=0.141074
+
+Layer 17/23... nu_frac=0.159014
+
+Layer 18/23... nu_frac=0.152569
+
+Layer 19/23... nu_frac=0.135087
+
+Layer 20/23... nu_frac=0.132579
+
+Layer 21/23... nu_frac=0.152675
+
+Layer 22/23... nu_frac=0.143917
+
+Layer 23/23... nu_frac=0.217949
+
+Results saved to: results/schur_seed1_step40000.csv
+Done!
+Device: cuda
+Loading checkpoint: ckpts_seed1/gpt3large_seed1_ckpt50000_modelonly_bf16.pt
+Number of parameters: 756.89M
+Model: 24L, 1536d, 16 heads, query_mode=residual_gelu
+  Checkpoint loaded.
+Loading WikiText-2 (real text data)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (286177 > 1024). Running this sequence through the model will result in indexing errors
+Data: 20 batches of WikiText-2 (real text)
+
+Layer 0/23... nu_frac=0.104243
+
+Layer 1/23... nu_frac=0.026786
+
+Layer 2/23... nu_frac=0.106843
+
+Layer 3/23... nu_frac=0.118605
+
+Layer 4/23... nu_frac=0.160398
+
+Layer 5/23... nu_frac=0.045320
+
+Layer 6/23... nu_frac=0.149090
+
+Layer 7/23... nu_frac=0.192262
+
+Layer 8/23... nu_frac=0.168244
+
+Layer 9/23... nu_frac=0.154102
+
+Layer 10/23... nu_frac=0.107014
+
+Layer 11/23... nu_frac=0.149476
+
+Layer 12/23... nu_frac=0.147924
+
+Layer 13/23... nu_frac=0.160142
+
+Layer 14/23... nu_frac=0.192667
+
+Layer 15/23... nu_frac=0.161347
+
+Layer 16/23... nu_frac=0.138964
+
+Layer 17/23... nu_frac=0.158040
+
+Layer 18/23... nu_frac=0.151181
+
+Layer 19/23... nu_frac=0.137204
+
+Layer 20/23... nu_frac=0.131446
+
+Layer 21/23... nu_frac=0.155582
+
+Layer 22/23... nu_frac=0.154121
+
+Layer 23/23... nu_frac=0.206952
+
+Results saved to: results/schur_seed1_step50000.csv
+Done!
+Device: cuda
+Loading checkpoint: ckpts_seed1/gpt3large_seed1_ckpt60000_modelonly_bf16.pt
+Number of parameters: 756.89M
+Model: 24L, 1536d, 16 heads, query_mode=residual_gelu
+  Checkpoint loaded.
+Loading WikiText-2 (real text data)...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (286177 > 1024). Running this sequence through the model will result in indexing errors
+Data: 20 batches of WikiText-2 (real text)
+
+Layer 0/23... nu_frac=0.102964
+
+Layer 1/23... nu_frac=0.025727
+
+Layer 2/23... nu_frac=0.105477
+
+Layer 3/23... nu_frac=0.117882
+
+Layer 4/23... nu_frac=0.158672
+
+Layer 5/23... nu_frac=0.044069
+
+Layer 6/23... nu_frac=0.147462
+
+Layer 7/23... nu_frac=0.190480
+
+Layer 8/23... nu_frac=0.166351
+
+Layer 9/23... nu_frac=0.150658
+
+Layer 10/23... nu_frac=0.104127
+
+Layer 11/23... nu_frac=0.144271
+
+Layer 12/23... nu_frac=0.143310
+
+Layer 13/23... nu_frac=0.155466
+
+Layer 14/23... nu_frac=0.187587
+
+Layer 15/23... nu_frac=0.157751
+
+Layer 16/23... nu_frac=0.137748
+
+Layer 17/23... nu_frac=0.155370
+
+Layer 18/23... nu_frac=0.149006
+
+Layer 19/23... nu_frac=0.138357
+
+Layer 20/23... nu_frac=0.130363
+
+Layer 21/23... nu_frac=0.158818
+
+Layer 22/23... nu_frac=0.159296
+
+Layer 23/23... nu_frac=0.202777
+
+Results saved to: results/schur_seed1_step60000.csv
+Done!
