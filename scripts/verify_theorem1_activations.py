@@ -8,10 +8,20 @@ Numerical verification of Theorem 1 activation-robustness.
 Reference: B2_theorem_robustness.pdf (PI's latest theorem)
 """
 
+import os
+import sys
+
 import numpy as np
 import torch
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from plot_style import apply_style, save_figure, PALETTE
+
+apply_style()
+
+FIGDIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "figures")
 
 DEVICE = "cpu"
 
@@ -79,18 +89,18 @@ def verify():
     for kappa in [1.0, 5.0, 10.0, 50.0, 100.0]:
         f, target = relu_construction(p_vals, s1s2, kappa)
         err = (f - target).abs().max().item()
-        print(f"  κ={kappa:6.1f}  max |f - target| = {err:.6f}  (exact = 0)")
+        print(f"  kappa={kappa:6.1f}  max |f - target| = {err:.6f}  (exact = 0)")
     
     # GELU
     print("\n### GELU (Proposition 2) ###")
-    print("  error bound ≤ (2κ/λ) φ(2λ), with λ=κ")
+    print("  error bound <= (2kappa/lambda) phi(2lambda), with lambda=kappa")
     for kappa in [1.0, 5.0, 10.0, 50.0, 100.0]:
         lam = kappa
         f, target = gelu_construction(p_vals, s1s2, lam, kappa)
         err = (f - target).abs().max().item()
         phi_2lam = (1.0 / np.sqrt(2 * np.pi)) * np.exp(-(2 * lam) ** 2 / 2)
         bound = (2 * kappa / lam) * phi_2lam
-        print(f"  κ={kappa:6.1f}  max err = {err:.6f}, bound = {bound:.6f}, err/bound = {err/bound:.3f}")
+        print(f"  kappa={kappa:6.1f}  max err = {err:.6f}, bound = {bound:.6f}, err/bound = {err/bound:.3f}")
     
     # Plot GELU error decay
     kappas = np.logspace(0, 2, 50)
@@ -102,22 +112,20 @@ def verify():
         errors.append((f - target).abs().max().item())
         phi_2lam = (1.0 / np.sqrt(2 * np.pi)) * np.exp(-(2 * lam) ** 2 / 2)
         bounds.append((2 * kappa / lam) * phi_2lam)
-    
-    plt.figure(figsize=(8, 5))
-    plt.loglog(kappas, errors, 'o-', label='GELU max error', color='#2a78d6')
-    plt.loglog(kappas, bounds, '--', label='Theoretical bound', color='#e34948')
-    plt.xlabel("κ = λ")
-    plt.ylabel("Absolute error")
-    plt.title("GELU parity construction: error vs κ")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig("fig_theorem_gelu_error.png", dpi=150)
-    print("\nSaved: fig_theorem_gelu_error.png")
+
+    fig, ax = plt.subplots(figsize=(7.0, 4.5))
+    ax.loglog(kappas, errors, "o-", label="GELU max error", color=PALETTE["residual_gelu"], lw=2.0, ms=5)
+    ax.loglog(kappas, bounds, "--", label="Theoretical bound", color=PALETTE["seed1"], lw=1.5)
+    ax.set_xlabel("$\\kappa = \\lambda$")
+    ax.set_ylabel("Absolute error")
+    ax.set_title("GELU parity construction: error vs $\\kappa$")
+    ax.legend(loc="upper right", framealpha=0.9, edgecolor="gray")
+    save_figure(fig, os.path.join(FIGDIR, "fig_theorem_gelu_error"))
+    print("\nSaved: figures/fig_theorem_gelu_error.png + .pdf")
     
     print("\n=== Summary ===")
-    print("ReLU: exact at every finite κ (f = κ(|p|-1) = κ s1 s2 on support {-2,0,2})")
-    print("GELU: error ~ O(exp(-2κ²)), confirmed numerically")
+    print("ReLU: exact at every finite kappa (f = kappa(|p|-1) = kappa s1 s2 on support {-2,0,2})")
+    print("GELU: error ~ O(exp(-2 kappa^2)), confirmed numerically")
 
 
 if __name__ == "__main__":
