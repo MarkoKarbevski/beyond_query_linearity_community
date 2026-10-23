@@ -10,7 +10,7 @@ The work is based on:
 Official implementation and model weights for the paper: **"Beyond Linearity in Attention Projections: The Case for Nonlinear Queries"** ([arXiv:2603.13381](https://arxiv.org/abs/2603.13381)).
 This repository implements nonlinear query projections of the form $Q(X) = (X + f_\theta(X))/2$, where $f_\theta$ is a bottleneck MLP, replacing the standard linear $W_Q$ at the same parameter budget. Building on the algebraic redundancy of $W_Q$ established by [Karbevski and Mijoski (2025)](https://arxiv.org/abs/2510.23912)), we show that nonlinear queries consistently improve validation loss over baseline, comfortably outperforming a model with 12.5% more non-embedding parameters.
 
-To be presented at the ICLR 2026 Workshop on Geometry-grounded Representation Learning and Generative Modeling (GRaM)).
+To be presented at the NeurIPS 2026 Workshop on SLM-Agents.
 
 ---
 ## 🚀 Quick Start
@@ -46,12 +46,12 @@ Keys and values remain standard linear projections.
 ## 📝 Citation [OLD, TO BE CHANGED]
 If you find this work useful in your research, please cite:
 ```bibtex
-@article{karbevski2026beyond,
-  title={Beyond Linearity in Attention Projections: The Case for Nonlinear Queries},
-  author={Karbevski, Marko},
-  journal={arXiv preprint arXiv:2603.13381},
-  year={2026},
-  note={Presented at the ICLR 2026 Workshop on Geometry-grounded Representation Learning and Generative Modeling (GRaM)}
+@inproceedings{jeong2026beyond,
+  title     = {Beyond Query Linearity: The Case for Nonlinear Queries},
+  author    = {Jeong, Jiwon and Chan, Dun Li and Ceniccola, Andrew and Sharma, Rahul and Sang, Simon and Mehta, Parva and Di Nicco, Pietro and Kumar, Neel and Saraipour, Karim and Karbevski, Marko},
+  booktitle = {NeurIPS 2026 Workshop on SLM-Agents},
+  year      = {2026},
+  url       = {https://openreview.net/forum?id=M8z9uMfxk5},
 }
 ```
 ---
