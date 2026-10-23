@@ -7,7 +7,7 @@ A spinoff from the Eleuther AI community discord aiming to extend the results an
 
 
 The work is based on:
-Official implementation and model weights for the paper: **"Beyond Linearity in Attention Projections: The Case for Nonlinear Queries"** ([arXiv:2603.13381](https://arxiv.org/abs/2603.13381)).
+Official implementation and model weights for the paper: **"Beyond Linearity in Attention Projections: The Case for Nonlinear Queries"** ([Beyond Linearity in Attention Projections](https://openreview.net/forum?id=M8z9uMfxk5)).
 This repository implements nonlinear query projections of the form $Q(X) = (X + f_\theta(X))/2$, where $f_\theta$ is a bottleneck MLP, replacing the standard linear $W_Q$ at the same parameter budget. Building on the algebraic redundancy of $W_Q$ established by [Karbevski and Mijoski (2025)](https://arxiv.org/abs/2510.23912)), we show that nonlinear queries consistently improve validation loss over baseline, comfortably outperforming a model with 12.5% more non-embedding parameters.
 
 To be presented at the NeurIPS 2026 Workshop on SLM-Agents.
@@ -43,7 +43,7 @@ The attention mechanism has been modified to support nonlinear query projections
 
 Keys and values remain standard linear projections.
 ---
-## 📝 Citation [OLD, TO BE CHANGED]
+## 📝 Citation
 If you find this work useful in your research, please cite:
 ```bibtex
 @inproceedings{jeong2026beyond,
