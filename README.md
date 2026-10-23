@@ -1,5 +1,7 @@
 # Beyond Linearity in Attention Projections
 ### The Case for Nonlinear Queries - Community extension and verification
+#### by Jeong, Jiwon and Chan, Dun Li and Ceniccola, Andrew and Sharma, Rahul and Sang, Simon and Mehta, Parva and Di Nicco, Pietro and Kumar, Neel and Saraipour, Karim and Karbevski, Marko
+
 
 A spinoff from the Eleuther AI community discord aiming to extend the results and explore the effects of the theoretically driven nonlinear queries. Paper under preparation.
 
